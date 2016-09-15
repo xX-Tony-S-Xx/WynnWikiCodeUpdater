@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package wikiupdater;
 
 import java.util.ArrayList;
@@ -12,11 +7,11 @@ import javax.swing.JFrame;
 
 /**
  * For updating template on Wynncraft wiki
- * @author Tong Shen
+ * @author smallst
  */
 public class WikiUpdater {
     static ArrayList Memory = new ArrayList();
-    static Graphics gui = new Graphics();
+    static Graphics gui = new Graphics();//currently not in use
     static HashMap TemplateMap = new HashMap();
     static int MemorySlot = 0;
     /**
@@ -35,10 +30,10 @@ public class WikiUpdater {
     
     //This run method currently serving as a test subject
     static void Run(){
-        int one = Reading("update GamePlay ewotwu we21");
-        Template Outdated = new Template("{{Outdated|update=}}");
-        Comparing(Sorting(one), Outdated);
-        gui.ConsoleOutput(Outdated.GetResult());
+        int one = Reading("Update GamePlay1.5 ewotwu we21");//User input
+        Template Outdated = new Template("{{Outdated|update=}}");//Template, fed by user
+        Comparing(Sorting(one), Outdated);//Comparing,sorting,blah blah blah
+        gui.ConsoleOutput("Result: "+Outdated.GetResult());//Get result
     }
     /**
      * This method separate a sentence into a list of words. Give default value 
@@ -60,15 +55,15 @@ public class WikiUpdater {
         char[] c = s.toCharArray();
         ArrayList word = new ArrayList();
         for (int i = 0; i < c.length; i++) {
-            gui.ConsoleOutput(word.toString());
-            if (Character.isAlphabetic(c[i])) {
+            //gui.ConsoleOutput(word.toString());
+            if (Character.isLetterOrDigit(c[i])|| c[i]=='.') {
                 word.add(c[i]);
                 if (i == c.length-1) {
                     String result_word = "";
                     for (int j = 0; j < word.size(); j++) {
                         result_word += word.get(j).toString();
                     }
-                    gui.ConsoleOutput(result_word);
+                    //gui.ConsoleOutput(result_word);
                     WordList.add(result_word);
                     word.clear();
                 }
@@ -76,12 +71,12 @@ public class WikiUpdater {
                 if (word.isEmpty()) {
                     continue;
                 }
-                gui.ConsoleOutput("One word ends.");
+                //gui.ConsoleOutput("One word ends.");
                 String result_word ="";
                 for (int j = 0; j < word.size(); j++) {
                     result_word += word.get(j).toString();
                 }
-                gui.ConsoleOutput(result_word);
+                //gui.ConsoleOutput(result_word);
                 if (isTemplate) {
                     TemplateMap.put(result_word, i);
                 }
@@ -91,7 +86,7 @@ public class WikiUpdater {
         }
         Memory.add(MemorySlot, WordList);
         MemorySlot++;
-        gui.ConsoleOutput(WordList.toString());
+        //gui.ConsoleOutput(WordList.toString());
         return Memory.indexOf(WordList);
     }
     
@@ -106,7 +101,14 @@ public class WikiUpdater {
         boolean spacer = true;
         for (int i = 0; i < target.size(); i++) {
             if (spacer) {
-                WordPair.put(target.get(i), target.get(i+1));
+                String stringVariable = (String)target.get(i);
+                char[] c = stringVariable.toCharArray();
+                stringVariable = "";
+                for (int j = 0; j < c.length; j++) {
+                    c[j] = Character.toLowerCase(c[j]);
+                    stringVariable += c[j];
+                }
+                WordPair.put(stringVariable, target.get(i+1));
                 spacer = false;
             }else{
                 spacer = true;
@@ -126,11 +128,10 @@ public class WikiUpdater {
         Object[] target = r.toArray();
         ArrayList template;
         for (int i = 0; i < target.length; i++) {
+            
             template = t.GetClosest((String) target[i]);
             if (template.size() == 1) {
                 t.Inserting((String) template.get(0), (String) map.get(target[i]));
-            }else{
-                //TODO: Do some advance comparesion
             }
         }
     }
